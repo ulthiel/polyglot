@@ -60,7 +60,7 @@ bool book_is_open(){
 void book_open(const char file_name[]) {
 
    ASSERT(file_name!=NULL);
-   if(FALSE && option_get_bool(Option,"BookLearn")){
+   if(option_get_bool(Option,"BookLearn")){
        BookFile = fopen(file_name,"rb+");
    }else{
        BookFile = fopen(file_name,"rb");
@@ -174,11 +174,12 @@ int book_move(const board_t * board, bool random) {
 void book_moves(list_t * list, const board_t * board) {
 
    int first_pos;
-   int sum;
+   double sum;
    int pos;
    entry_t entry[1];
    int move;
    int score;
+   uint32 weight[1000]; // [HGM] assumes not more than 1000 book moves per position!
    char move_string[256];
 
    ASSERT(board!=NULL);
@@ -201,7 +202,10 @@ void book_moves(list_t * list, const board_t * board) {
       read_entry(entry,pos);
       if (entry->key != board->key) break;
 
-      sum += entry->count;
+      weight[pos - first_pos] = 1000 * (uint32)entry->count;
+      if(option_get_bool(Option,"BookLearn")) // [HGM] improvised use of learn info
+          weight[pos - first_pos] *= ((uint32)entry->n + 10.) /((uint32)entry->sum + 1.);
+      sum += weight[pos - first_pos];
    }
 
    // disp
@@ -212,7 +216,7 @@ void book_moves(list_t * list, const board_t * board) {
       if (entry->key != board->key) break;
 
       move = entry->move;
-      score = (((uint32)entry->count)*((uint32)10000))/sum;  // 32 bit safe!
+      score = (10000.*weight[pos-first_pos])/sum;
 
       if (move != MoveNone && move_is_legal(move,board)) {
               list_add_ex(list,move,score);

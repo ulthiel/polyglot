@@ -43,6 +43,7 @@ static const bool DelayPong = FALSE;
 typedef struct {
    int state;
    bool computer[ColourNb];
+   bool playedAllMoves[ColourNb];
    int exp_move;
    int hint_move;
    int resign_nb;
@@ -327,6 +328,8 @@ void xboard2uci_gui_step(char string[]) {
 			} else {
 				State->computer[White] = FALSE;
 				State->computer[Black] = TRUE;
+				State->playedAllMoves[White] = TRUE; // [HGM]
+				State->playedAllMoves[Black] = TRUE;
 			}
 
 			XB->new_hack = TRUE;
@@ -443,7 +446,7 @@ void xboard2uci_gui_step(char string[]) {
 
 				// book learning
 
-				if (FALSE && option_get_bool(Option,"Book") &&
+				if (option_get_bool(Option,"Book") &&
                     option_get_bool(Option,"BookLearn")) {
 
 					if (FALSE) {
@@ -615,6 +618,9 @@ void xboard2uci_gui_step(char string[]) {
 				XB->new_hack = FALSE;
 				ASSERT(!XB->result);
 				XB->result = FALSE;
+
+				// [HGM] externally supplied move means we did not fully play the current stm
+				State->playedAllMoves[colour_is_white(game_turn(Game)) ? White : Black] = FALSE;
 
 				move_step(move);
 				no_mess(move);
@@ -846,6 +852,19 @@ void format_xboard_option_line(char * option_line, option_t *opt){
     }
 }
 
+// disarm() // [HGM] cleanse a string of offending double-quotes
+
+static char*disarm(const char *s){
+    static char buf[25];
+    char *p = buf, *q;
+    strncpy(buf, s, 24);
+    q = buf + strlen(buf) - 1;
+    while(*q == '"') *q-- = '\0';          // strip trailing quotes
+    while(*p == '"') p++;                  // strip leading quotes
+    while((q = strchr(p, '"'))) *q = '\''; // replace internal quotes
+    return p;
+}
+
 // send_xboard_options()
 
 static void send_xboard_options(){
@@ -860,7 +879,7 @@ static void send_xboard_options(){
     gui_send(GUI,"feature draw=1");
     gui_send(GUI,"feature ics=1");
     gui_send(GUI,"feature myname=\"%s\"",
-             option_get_string(Option,"EngineName"));
+             disarm(option_get_string(Option,"EngineName")));
     gui_send(GUI,"feature name=1");
     gui_send(GUI,"feature pause=0");
     gui_send(GUI,"feature ping=1");
@@ -1699,20 +1718,20 @@ static void learn(int result) {
    ASSERT(result>=-1&&result<=+1);
 
    ASSERT(XB->result);
-   ASSERT(State->computer[White]||State->computer[Black]);
+//   ASSERT(State->computer[White]||State->computer[Black]);
 
    // init
 
    pos = 0;
 
-   if (FALSE) {
-   } else if (State->computer[White]) {
+   // [HGM] does not account for the hypothetical possibility we played both sides!
+   if (State->playedAllMoves[White]) {
       pos = 0;
-   } else if (State->computer[Black]) {
+   } else if (State->playedAllMoves[Black]) {
       pos = 1;
       result = -result;
    } else {
-      my_fatal("learn(): unknown side\n");
+      return; // [HGM] if we did not play all moves for some side, do not learn, but don't make a fuss!
    }
 
    if (FALSE) {
