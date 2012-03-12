@@ -231,6 +231,10 @@ void xboard2uci_gui_step(char string[]) {
 			if(option_find(Uci->option,"UCI_DrawOffers")){
 			    my_log("POLYGLOT draw from XB received");
 				uci_send_option(Uci,"DrawOffer","%s","draw");}
+			else if (option_get_bool(Option,"HandleDraws") && Uci->root_move_nb > 20) { // [HGM] PG draw handling
+			    my_log("POLYGLOT draw from XB received");
+			    if (Uci->best_score <= -option_get_int(Option,"ContemptScore")) 
+			        gui_send(GUI,"offer draw");}
 		} else if (match(string,"easy")) {
 
 			XB->ponder = FALSE;
