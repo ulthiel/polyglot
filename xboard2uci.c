@@ -1014,8 +1014,10 @@ static void comp_move(int move) {
          my_log("POLYGLOT %d move%s with resign score\n",State->resign_nb,(State->resign_nb>1)?"s":"");
 
          if (State->resign_nb >= option_get_int(Option,"ResignMoves")) {
-            my_log("POLYGLOT *** RESIGN ***\n");
-            gui_send(GUI,"resign");
+	    if (!option_get_bool(Option,"QueenNeverResigns") || !board_has_queen(board, board->turn)) { // [HGM] suppress resignig with Queen
+                my_log("POLYGLOT *** RESIGN ***\n");
+                gui_send(GUI,"resign");
+	    }
          }
 
       } else {

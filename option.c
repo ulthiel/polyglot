@@ -46,6 +46,7 @@ option_t DefaultOptions[] = {
 
     { "Resign",           "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
     { "ResignMoves",      "spin","0","10000",    "3"        , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
+    { "QueenNeverResigns","check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
     { "ResignScore",      "spin","0","10000",   "600"       , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
 
     { "MateScore",        "spin","0","100000",  "10000"     , NULL,0,NNB,  PG|XBOARD}, 

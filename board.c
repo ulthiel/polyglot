@@ -270,6 +270,24 @@ bool board_equal(const board_t * board_1, const board_t * board_2) {
    return TRUE;
 }
 
+// board_has_queen()
+
+bool board_has_queen(const board_t * board, int colour) {
+
+   int sq_64, sq, piece;
+
+   ASSERT(board!=NULL);
+
+   for (sq_64 = 0; sq_64 < 64; sq_64++) {
+      sq = square_from_64(sq_64);
+      piece = board->square[sq];
+      if (colour_equal(piece,colour) && piece_is_queen(piece)) {
+         return TRUE;
+      }
+   }
+   return FALSE;
+}
+
 // board_init_list()
 
 void board_init_list(board_t * board) {

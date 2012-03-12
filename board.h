@@ -49,6 +49,8 @@ extern void board_start        (board_t * board);
 extern void board_copy         (board_t * dst, const board_t * src);
 extern bool board_equal        (const board_t * board_1, const board_t * board_2);
 
+extern bool board_has_queen    (const board_t * board, int colour);
+
 extern void board_init_list    (board_t * board);
 
 extern int  board_flags        (const board_t * board);
