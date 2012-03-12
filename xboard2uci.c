@@ -21,6 +21,7 @@
 #include "move.h"
 #include "move_do.h"
 #include "move_legal.h"
+#include "move_gen.h"
 #include "option.h"
 #include "parse.h"
 #include "san.h"
@@ -177,6 +178,9 @@ void xboard2uci_init() {
    XB->node_rate = -1;
 }
 
+
+static list_t move_list[1];
+
 // xboard2uci_gui_step()
 
 void xboard2uci_gui_step(char string[]) {
@@ -208,6 +212,36 @@ void xboard2uci_gui_step(char string[]) {
 			if (option_get_bool(Option,"Book")) {
 				game_get_board(Game,board);
 				book_disp(board);
+			} else { // [HGM] without book, print all legal moves
+				int i;
+				game_get_board(Game,board);
+				gen_legal_moves(move_list,board);
+				for(i=0; i<list_size(move_list); i++){
+					move_list->value[i] = 0;
+			   		move_to_san(move_list->move[i],board,move_string,256);
+					printf(" %6s\n",move_string);
+				}
+				// this is necessary by the xboard protocol
+				printf("\n");
+			}
+
+		} else if (match(string,"kill *") || match(string,"option Polyglot exclude move=*")) { // [HGM] 
+
+			if (XB->analyse) {
+				int i;
+				game_get_board(Game,board);
+				if(!list_size(move_list)) {
+					gen_legal_moves(move_list,board);
+					for(i=0; i<list_size(move_list); i++){
+						move_list->value[i] = 0;
+					}
+				}
+				move = move_from_san(Star[0],board);
+
+				for(i=0; i<list_size(move_list); i++){
+					if(move_list->move[i] == move) move_list->value[i] = 1;
+				}
+				mess();
 			}
 
 		} else if (match(string,"black")) {
@@ -600,6 +634,8 @@ void xboard2uci_gui_step(char string[]) {
 
 		} else if (match(string,"undo")) {
 
+			move_list->size = 0; // [HGM] clear all exclude moves
+
 			if (game_pos(Game) >= 1) {
 
 				game_goto(Game,game_pos(Game)-1);
@@ -613,6 +649,8 @@ void xboard2uci_gui_step(char string[]) {
 			}
 
 		} else if (match(string,"usermove *")) {
+
+			move_list->size = 0; // [HGM] clear all exclude moves
 
 			game_get_board(Game,board);
 			move = move_from_san(Star[0],board);
@@ -879,6 +917,7 @@ static void send_xboard_options(){
     gui_send(GUI,"feature done=0");
     
     gui_send(GUI,"feature analyze=1");
+    gui_send(GUI,"feature exclude=1");
     gui_send(GUI,"feature colors=0");
     gui_send(GUI,"feature draw=1");
     gui_send(GUI,"feature ics=1");
@@ -959,6 +998,8 @@ void xboard2uci_send_options(){
   }
   
   
+  gui_send(GUI,"feature option=\"Polyglot exclude move -string \"");
+
   option_start_iter(Option);
   while((opt=option_next(Option))){
     if(opt->mode &XBOARD){
@@ -1425,8 +1466,23 @@ static void search_update() {
          engine_send(Engine,""); // newline
 
       } else if (State->state == ANALYSE) {
+         int i;
+         char move_string[256];
 
-         engine_send(Engine,"go infinite");
+         engine_send_queue(Engine,"go infinite");
+
+         if(list_size(move_list)) {
+		board_t board[1];
+		game_get_board(Game,board);
+            engine_send_queue(Engine," searchmoves");
+            for(i=0; i<list_size(move_list); i++) {
+               if(!move_list->value[i]) {
+                  move_to_can(move_list->move[i],board,move_string,256);
+                  engine_send_queue(Engine," %s",move_string);
+               }
+            }
+         }
+         engine_send(Engine,""); // newline
 
       } else {
 
