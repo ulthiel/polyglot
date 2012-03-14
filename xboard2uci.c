@@ -213,22 +213,21 @@ void xboard2uci_gui_step(char string[]) {
 				game_get_board(Game,board);
 				book_disp(board);
 			} else { // [HGM] without book, print all legal moves
-				int i;
+				int i, gen=!list_size(move_list);
 				game_get_board(Game,board);
-				gen_legal_moves(move_list,board);
+				if(gen) gen_legal_moves(move_list,board);
 				for(i=0; i<list_size(move_list); i++){
-					move_list->value[i] = 0;
+					if(gen) move_list->value[i] = 0;
 			   		move_to_san(move_list->move[i],board,move_string,256);
-					printf(" %6s\n",move_string);
+					printf(" %s%6s\n", move_list->value[i]? "* " : "", move_string);
 				}
 				// this is necessary by the xboard protocol
 				printf("\n");
 			}
 
-		} else if (match(string,"kill *") || match(string,"option Polyglot exclude move=*")) { // [HGM] 
+		} else if (match(string,"exclude *") || match(string,"option Polyglot exclude move=*")) { // [HGM] 
 
-			if (XB->analyse) {
-				int i;
+				int i, all = !strcmp(Star[0], "all"), change=FALSE, cnt=0;
 				game_get_board(Game,board);
 				if(!list_size(move_list)) {
 					gen_legal_moves(move_list,board);
@@ -239,10 +238,23 @@ void xboard2uci_gui_step(char string[]) {
 				move = move_from_san(Star[0],board);
 
 				for(i=0; i<list_size(move_list); i++){
-					if(move_list->move[i] == move) move_list->value[i] = 1;
+					if(all || move_list->move[i] == move)
+						change |= !move_list->value[i], move_list->value[i] = 1;
+					cnt += !move_list->value[i];
 				}
-				mess();
+				if(change && cnt) mess(); // do not relay to engine if no change or no moves left
+
+		} else if (match(string,"include *")) { // [HGM] 
+
+			int i, all = !strcmp(Star[0], "all"), change = FALSE;
+			game_get_board(Game,board);
+			move = move_from_san(Star[0],board);
+
+			for(i=0; i<list_size(move_list); i++){
+				if(all || move_list->move[i] == move)
+					change |= move_list->value[i], move_list->value[i] = 0;
 			}
+			if(change) mess();
 
 		} else if (match(string,"black")) {
 
@@ -359,6 +371,8 @@ void xboard2uci_gui_step(char string[]) {
 			option_set(Option,"Chess960","false");
 
 			game_clear(Game);
+
+			move_list->size = 0; // [HGM] clear all exclude moves
 
 			if (XB->analyse) {
 				State->computer[White] = FALSE;
@@ -612,6 +626,8 @@ void xboard2uci_gui_step(char string[]) {
 			my_log("POLYGLOT FEN %s\n",Star[0]);
 
 			if (!game_init(Game,Star[0])) my_fatal("xboard_step(): bad FEN \"%s\"\n",Star[0]);
+
+			move_list->size = 0; // [HGM] clear all exclude moves
 
 			State->computer[White] = FALSE;
 			State->computer[Black] = FALSE;
