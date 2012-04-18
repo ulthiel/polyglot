@@ -417,30 +417,44 @@ implementation may for example verify that there is really a king
 present on e1/e8.
 <h2>weight</h2>
 In the Polyglot source code this field is called "count" but it is in fact
-a measure for the quality of the move. <b>It should be at least one.</b>
+a measure for the quality of the move.
 <p>
 The Polyglot book generator sets it to 2*(wins)+(draws), globally 
 scaled to fit into 16 bits. A move with a weight of zero is deleted
 from the book. This is just a convention and  book authors
-are free to set this field according to their taste (as long as it is at least one).
+are free to set this field according to their taste.
 <p>
 If random play is enabled in Polyglot then the probability that
 a move is selected is its weight divided by the sum of the weights
 of all the moves in the given position. 
+In XBoard, which also supports Polyglot books, the weight can be raised
+to a power N (0 <= N <= infinity) before doing the probability calculation,
+enhancing or completely destroying the effect of the weights.
 <h3>A note on zero weights</h3>
-Polyglot assumes that weights are at least one since a zero
-weight means the move should not be played, and hence you might as
-well delete the entry from the book (which the Polyglot book generator does).
+Note that older Polyglot versions are defective as to the use of zero weights,
+(meaning the move should never be played),
+and crash when they encounter them.
+This because of a misplaced internal consistency check,
+which really only made sense during book building
+(wich deletes all entries with zero weight from the book).
 
-Nonetheless, if you really insist, an entry with zero weight can be
-approximated by giving it very low probability. This is what Scid does.
+Yet hand-tuning of a book often leads to the desire to completely disable a move,
+without deleting it. Some software approximates an entry with zero weight
+by giving it very low probability. This is for instance what Scid does,
+but it means the move will still occasionally be played.
+With XBoard you can edit Polyglot books to set the weight to exactly zero,
+as well as delete or add moves.
  
 <h2>learn</h2> "learn" is set to zero by the Polyglot book generator.
 If you set "BookLearn=true" in polyglot.ini then this field
-is used to record learning information. However I do not know of any
-program that uses this information. Also this means the Polyglot should
+is used to record learning information. From Polyglot 2.0 on, Polyglot
+can also use this learn information for modulating the playing probabilities
+of the book moves, based on how often they were played and with
+how much success they met. To use this feature Polyglot should
 have write access to the opening book which on Unix systems will probably
 not be the case if the book has been installed centrally.
+Note that for the book to be opened for write access, the option
+BookLearn will have to be set before the book file is specified!
 <p>
 <h2>Sample code</h2>
 The following sample code is released in the public domain.
@@ -515,6 +529,30 @@ b=1,c=2,d=3,e=4,f=5,g=6.
 (see above) in which the "from square" is the position of the king and
 the "to square" is the position of the rook. This is to maintain
 compatibility with various Fruit derivatives.
+
+<h2>Extension to other variants</h2>
+Polyglot does not support any Chess variants other than Mad Queen and Chess960.
+XBoard, however, does, and has extended the definition of the Polyglot book format to cover such variants.
+To generalize to various board formats, it also numbers the board square in raster-scan fashion.
+So in Xiangqi, which has a 9x10 board, the square number equals 9*row+file, and can run upto 90.
+The piece numbering is also extended beyond King, keeping the alternation of 
+white and black pieces of the same type, to accomodate unorthodox piece types.
+<p>
+To map a (piece, square) combination to a hash key, however,
+only the square number modulo 64 and the piece number modulo 12 is used as index in the key table.
+The square number divided by 64 and piece number divided by 12 is then used to decide
+how the retreived key should be (bit-wise) rotated to get the actual key.
+Square numbers in the range 64-127 rotate the key by 8 bits,
+while piece values in the ranges 12-23, 24-35 and 36-47 rotate by 16, 32 or 48 bits, respectively.
+This is sufficient for boards of upto 128 squares, and up to 24 piece types.
+A number derived from the variant can be added to the overall key,
+to prevent positions from variants with equal board and piece types (e.g. suicide, losers or atomic)
+to map to the same key, and invalidates books made for one of those for accidental use by any of the others.
+<p>
+The move encoding on large boards is fromSquare*boardSize + toSquare + boardSize*boardSize*promotionType.
+For large boards this might leave a shortage of promotion types,
+but fortunately promotions are not very common in opening theory.
+For details, we refer to the XBoard source code.
 </body>
 
 
