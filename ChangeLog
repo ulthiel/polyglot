@@ -1,3 +1,10 @@
+- The exclude-moves feature now fully supports the WB protocol extension for this (exclude MOVE|all, include MOVE|all).
+=========2.0.1==================
+- This is the first of a fork initiated by HGM. It starts by reverting the previous book-learning change, as the reasons for it seem invalid. Peopl do not use book learning for making better opening books, but for adapting a book to one specific engine, and provide diversity in on-line play, to prevent human opponents from exploiting a likely line they once won by repeating it again and again.
+- Polyglot was now also made to use the learn info it updates, for promoting diversity and avoidance of lines with a poor result record.
+- An option to refrain from resigning while you till have a Queen (QueenNeverResigns) was added
+- Option to accept draw offers (HandleDraws and ContemptScore) were added.
+- A first onset towards an exclude-moves feature was made.
 ========1.4.67b=================
 - Disable "book learning". Polyglot saves learning information but does not use it itself, probably for a reason. I believe the booklearning concept of Polyglot is fundamentally broken. Learning information is engine specific so it should not be saved in the opening book (it might be saved elsewhere). There are other issues as well, such as copyright and the possibility of the proliferation of polluted books. Opening books can be improved with information from games by using the merge command. This is a form of off line learning which is probably much more effective since one has strict control over what kind of information is added to the book.
 ========1.4.66b=================

@@ -1,12 +1,12 @@
 Summary: A Winboard protocol to UCI protocol adapter
 Name: polyglot
-Version: 1.4.67b
+Version: 2.01
 Release: 1
 License: GPL
 Group: Amusement/Games
-URL: http://alpha.uhasselt.be/Research/Algebra/Toga
+URL: http://hgm.nubati.net/cgi-bin/gitweb.cgi
 
-Source: http://alpha.uhasselt.be/Research/Algebra/Toga/polyglot-%{version}.tar.gz
+Source: http://hgm.nubati.net/polyglot/polyglot-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
@@ -35,6 +35,8 @@ PolyGlot is a "UCI adapter".  It connects a GUI interface (such as
 %{_bindir}/polyglot
 
 %changelog
+* Sat Apr 18 2012 H.G.Muller <h.g.muller@hccnet.nl> - 2.0.1
+- Start of new fork
 * Sat Jan 3 2009 Michel Van den Bergh <michel.vandenbergh@uhasselt.be> - 1.4w10UCIb10-1
 - Initial spec file
 
