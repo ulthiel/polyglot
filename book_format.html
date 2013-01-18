@@ -317,7 +317,7 @@ only updated after the appropriate king, rook or castling moves.
 
 
 
-<h3>enpassent</h3> If the opponent has performed a double pawn push
+<h3>en passant</h3> If the opponent has performed a double pawn push
 and there is now a pawn next to it belonging to the player to move then
 "enpassant" is the entry from RandomEnPassant whose offset is the file
 of the pushed pawn (counted from 0(=a) to 7(=h)). If this does not
@@ -537,24 +537,68 @@ To generalize to various board formats, it also numbers the board square in rast
 So in Xiangqi, which has a 9x10 board, the square number equals 9*row+file, and can run upto 90.
 The piece numbering is also extended beyond King, keeping the alternation of 
 white and black pieces of the same type, to accomodate unorthodox piece types.
+How unorthodox pieces should be mapped on numbers is not yet subject to an official standard.
+But variants that only the orthodox pieces (e.g. Suicide, Atomic) do not suffer from that.
 <p>
 To map a (piece, square) combination to a hash key, however,
 only the square number modulo 64 and the piece number modulo 12 is used as index in the key table.
 The square number divided by 64 and piece number divided by 12 is then used to decide
 how the retreived key should be (bit-wise) rotated to get the actual key.
-Square numbers in the range 64-127 rotate the key by 8 bits,
-while piece values in the ranges 12-23, 24-35 and 36-47 rotate by 16, 32 or 48 bits, respectively.
-This is sufficient for boards of upto 128 squares, and up to 24 piece types.
-A number derived from the variant can be added to the overall key,
+Square numbers in the range 64-127 rotate the key left by 8 bits,
+while piece values in the ranges 12-23, 24-35 and 36-47 rotate left by an additional 16, 32 or 48 bits, respectively.
+This is sufficient to handle boards of upto 128 squares, and up to 24 piece types.
+<p>
+A number derived from the variant can be XORed to the overall key,
 to prevent positions from variants with equal board and piece types (e.g. suicide, losers or atomic)
 to map to the same key, and invalidates books made for one of those for accidental use by any of the others.
+The table below defines the number that should be used for some common variants.
+Note that some variants that are mutually compatible use the same number,
+so that they can use the same opening book.
+<pre>
+ 0    standard Chess (aka Mad Queen), WildCastle, NoCastle, Fischer Random Chess (aka Chess960),
+ 0    Xiangqi (Chinese Chess),
+ 6    Crazyhouse,
+ 7    Losers Chess,
+ 8    Suicide Chess, Giveaway Chess,
+10    TwoKings,
+12    Atomic Chess,
+13    3Check,
+14    Shatranj,
+23    Shogi (Japanese Chess),
+25    Courier Chess,
+26    Gothic Chess, Capablanca Chess, Capablanca Random Chess,
+28    Knightmate,
+30    Cylinder Chess,
+31    Falcon Chess,
+33    Berolina Chess,
+34    Janus Chess,
+35    Superchess,
+36    Great Shatranj,
+38    Makruk (Thai Chess),
+39    S-Chess (aka Seirawan Chess),
+40    Grand Chess,
+41    Spartan Chess,
+</pre>
+<p>
+For variants with holdings from which pieces can be brought (back) in play (e.g. Crazyhouse, Shogi, S-Chess),
+the holdings are also part of the game state, and must be encoded in the key.
+To do this, the holdings are considered as a single off-board square with the next available number
+(so square number 64 in Crazyhouse).
+The (piece type, square number) pair is than mapped onto a key in the same way as for on-board pieces.
+A complication here is that multiple pieces, possibly of the same type, can be on this 'holdings square',
+so that XORing the corresponding key into the total will not work.
+(Having two pieces of a certain type would then be indistinguishable from having none, as A XOR A equals 0 for any A!)
+Therefore the holdings keys are not XORed but added to the total key,
+after all other key terms have been taken into account through XOR.
 <p>
 The move encoding on large boards is fromSquare*boardSize + toSquare + boardSize*boardSize*promotionType.
 For large boards this might leave a shortage of promotion types,
 but fortunately promotions are not very common in opening theory.
-For details, we refer to the XBoard source code.
+The meaning of the promotionType code can be variant-dependent.
+Especially if there is a shortage of codes, the most common promotions should receive the lowest codes.
+(E.g. in Grand Chess the board is 10x10, so the promotion-type multiplier is 10,000,
+while the 16-bit move encoding only runs upto 65,535.
+So there is only room for 6 promotion types, while 7 would be needed for the 6 possible piece types and non-promotion.)
+In asymmetric variants (e.g. Spartan Chess) the same code need not indicate the same piece type for both sides.
 </body>
-
-
-
 

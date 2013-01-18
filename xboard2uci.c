@@ -606,6 +606,8 @@ void xboard2uci_gui_step(char string[]) {
                 }
                 my_log("POLYGLOT EGTB Cache is %dMb\n",egt_cache);
                 real_memory=memory-egt_cache;
+		opt=option_find(Uci->option,"Hash");
+		if(opt && real_memory > atoi(opt->max)) real_memory = atoi(opt->max); // [HGM] top off
                 if(real_memory>0){
                     start_protected_command();
                     uci_send_option(Uci,"Hash", "%d", real_memory);
