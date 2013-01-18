@@ -1690,6 +1690,7 @@ static void send_info() {
     }else{
         min_depth=1;
     }
+    if(!strncmp(Uci->info, "xboard ", 7)) gui_send(GUI,"%s",Uci->info+7); else // kludge to allow UCI engines to use WB protocol
     gui_send(GUI,"%d %+d %.0f "S64_FORMAT" %s",Uci->best_depth>min_depth?Uci->best_depth:min_depth,
 	     0,0.0,U64(0),Uci->info);  
 }
