@@ -56,6 +56,7 @@ typedef struct {
     bool has_feature_smp;
     bool has_feature_egt_nalimov;
     bool has_feature_egt_gaviota;
+    bool has_feature_egt_syzygy;
     bool analyse;
     bool computer;
     const char * name;
@@ -150,6 +151,7 @@ void xboard2uci_init() {
    // This is a quick hack. 
    XB->has_feature_egt_nalimov = (option_find(Uci->option,"NalimovPath")!=NULL);
    XB->has_feature_egt_gaviota = (option_find(Uci->option,"GaviotaTbPath")!=NULL);
+   XB->has_feature_egt_syzygy  = (option_find(Uci->option,"SyzygyPath")!=NULL);
    XB->analyse = FALSE;
    XB->computer = FALSE;
    XB->name = NULL;
@@ -583,6 +585,12 @@ void xboard2uci_gui_step(char string[]) {
 			start_protected_command();
 			uci_send_option(Uci,"GaviotaTbPath","%s",path);
 			end_protected_command();
+		    }else if(my_string_case_equal(type,"syzygy") && XB->has_feature_egt_syzygy){
+			// updating SyzygyPath
+			my_log("POLYGLOT setting the Syzygy path to %s\n",path);
+			start_protected_command();
+			uci_send_option(Uci,"SyzygyPath","%s",path);
+			end_protected_command();
 		    }else{
 			// refuse
 			gui_send(GUI,"Error (unsupported table base format): %s",string);
@@ -595,14 +603,17 @@ void xboard2uci_gui_step(char string[]) {
             if(memory>=1){
                 // updating the available memory
                 option_t *opt;
+		int h;
                 my_log("POLYGLOT setting the amount of memory to %dMb\n",memory);
+                egt_cache=0;
                 if(XB->has_feature_egt_nalimov && (opt=option_find(Uci->option,"NalimovCache"))){
-                    egt_cache=atoi(opt->value);
-                }else if(XB->has_feature_egt_gaviota && 
+		    h=atoi(opt->value);
+                    if(h>egt_cache)egt_cache=h;
+                }
+		if(XB->has_feature_egt_gaviota && 
 			 (opt=option_find(Uci->option,"GaviotaTbCache"))){
-		    egt_cache=atoi(opt->value);
-		}else{
-                    egt_cache=0;
+		    h=atoi(opt->value);
+                    if(h>egt_cache)egt_cache=h;
                 }
                 my_log("POLYGLOT EGTB Cache is %dMb\n",egt_cache);
                 real_memory=memory-egt_cache;
@@ -974,7 +985,14 @@ static void send_xboard_options(){
 	if(tbs>0){
 	    strncat(egtfeature,",",StringSize-strlen(egtfeature));
 	}
+	tbs++;
 	strncat(egtfeature,"gaviota",StringSize-strlen(egtfeature));
+    }
+    if (XB->has_feature_egt_syzygy){
+	if(tbs>0){
+	    strncat(egtfeature,",",StringSize-strlen(egtfeature));
+	}
+	strncat(egtfeature,"syzygy",StringSize-strlen(egtfeature));
     }
     strncat(egtfeature,"\"",StringSize-strlen(egtfeature));
     egtfeature[StringSize-1]='\0';
@@ -1008,6 +1026,7 @@ void xboard2uci_send_options(){
     if(my_string_case_equal(opt->name,"Hash")) continue;
     if(my_string_case_equal(opt->name,"NalimovPath")) continue;
     if(my_string_case_equal(opt->name,"GaviotaTbPath")) continue;
+    if(my_string_case_equal(opt->name,"SyzygyPath")) continue;
     if((name=uci_thread_option(Uci))!=NULL &&
        my_string_case_equal(opt->name,name)) continue;
     format_xboard_option_line(option_line,opt);
