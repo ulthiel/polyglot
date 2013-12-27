@@ -715,6 +715,8 @@ static int parse_info(uci_t * uci, const char string[]) {
          ln = my_atoll(argument);
          ASSERT(ln>=0);
 
+         if (ln >= 0) uci->tbhit_nb = ln;
+
       } else if (my_string_equal(option,"time")) {
 
          ASSERT(!my_string_empty(argument));

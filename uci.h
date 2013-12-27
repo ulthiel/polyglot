@@ -54,6 +54,7 @@ typedef struct {
   char bestmove[UciStringSize];
   
   sint64 node_nb;
+  sint64 tbhit_nb;
   double time;
   double speed;
   double cpu;
