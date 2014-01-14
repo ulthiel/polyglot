@@ -899,6 +899,8 @@ static void parse_score(uci_t * uci, const char string[]) {
    parse_add_keyword(parse,"mate");
    parse_add_keyword(parse,"upperbound");
 
+   uci->bound_type = '\0'; // [HGM] bound: assume exact score
+
    // loop
 
    while (parse_get_word(parse,option,StringSize)) {
@@ -921,6 +923,8 @@ static void parse_score(uci_t * uci, const char string[]) {
 
          ASSERT(my_string_empty(argument));
 
+         uci->bound_type = '!';
+
       } else if (my_string_equal(option,"mate")) {
 
          ASSERT(!my_string_empty(argument));
@@ -933,6 +937,8 @@ static void parse_score(uci_t * uci, const char string[]) {
       } else if (my_string_equal(option,"upperbound")) {
 
          ASSERT(my_string_empty(argument));
+
+         uci->bound_type = '?';
 
       } else {
 

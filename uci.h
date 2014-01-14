@@ -42,6 +42,7 @@ typedef struct {
   int best_move;
   int ponder_move;
   
+  char bound_type;
   int score;
   int depth;
   int sel_depth;
