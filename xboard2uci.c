@@ -1738,7 +1738,8 @@ static void send_pv() {
 		 if(Uci->depth==-1) //hack to clear the engine output window
              gui_send(GUI,"%d %+d %.0f "S64_FORMAT" ",0,report_best_score(),Uci->time*100.0,Uci->node_nb);
 		if(option_get_bool(Option,"ShowTbHits"))
-		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" {"S64_FORMAT"} %s",Uci->best_depth,report_best_score(),Uci->time*100.0,Uci->node_nb,Uci->tbhit_nb,pv_string);
+		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" {%d,%.0f,"S64_FORMAT"} %s",
+			Uci->best_depth,report_best_score(),Uci->time*100.0,Uci->node_nb,Uci->sel_depth,Uci->speed/1e3,Uci->tbhit_nb,pv_string);
 		else
 		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" %s",Uci->best_depth,report_best_score(),Uci->time*100.0,Uci->node_nb,pv_string);
 
@@ -1751,6 +1752,10 @@ static void send_pv() {
          if (move != MoveNone && move_is_legal(move,board)) {
             move_to_san(move,board,move_string,256);
             line_to_san(Uci->best_pv,Uci->board,pv_string,StringSize);
+		if(option_get_bool(Option,"ShowTbHits"))
+		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" {%d,%.0f,"S64_FORMAT"} (%s) %s",Uci->best_depth,
+			report_best_score(),Uci->time*100.0,Uci->node_nb,Uci->sel_depth,Uci->speed/1e3,Uci->tbhit_nb,move_string,pv_string);
+		else
             gui_send(GUI,"%d %+d %.0f "S64_FORMAT" (%s) %s",Uci->best_depth,report_best_score(),Uci->time*100.0,Uci->node_nb,move_string,pv_string);
          }
       }
