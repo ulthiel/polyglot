@@ -330,7 +330,7 @@ int uci_parse(uci_t * uci, const char string[]) {
    ASSERT(string!=NULL);
 
    // init
-
+gui_send(GUI, "# %s\n", string);
    event = EVENT_NONE;
 
    // parse

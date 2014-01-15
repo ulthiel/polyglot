@@ -1716,6 +1716,9 @@ static void send_info() {
 
 // send_pv()
 
+//define EXT_INFO_FORMAT  "{%d,%.0f,"S64_FORMAT"} "
+#define EXT_INFO_FORMAT  " %2d %4.0f "S64_FORMAT"\t"
+
 static void send_pv() {
 
    char pv_string[StringSize];
@@ -1738,7 +1741,7 @@ static void send_pv() {
 		 if(Uci->depth==-1) //hack to clear the engine output window
              gui_send(GUI,"%d %+d %.0f "S64_FORMAT" ",0,report_best_score(),Uci->time*100.0,Uci->node_nb);
 		if(option_get_bool(Option,"ShowTbHits"))
-		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" {%d,%.0f,"S64_FORMAT"} %s%c",Uci->best_depth,report_best_score(),
+		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT EXT_INFO_FORMAT"%s%c",Uci->best_depth,report_best_score(),
 			Uci->time*100.0,Uci->node_nb,Uci->sel_depth,Uci->speed/1e3,Uci->tbhit_nb,pv_string,Uci->bound_type);
 		else
 		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" %s%c",Uci->best_depth,report_best_score(),Uci->time*100.0,Uci->node_nb,pv_string,Uci->bound_type);
@@ -1753,7 +1756,7 @@ static void send_pv() {
             move_to_san(move,board,move_string,256);
             line_to_san(Uci->best_pv,Uci->board,pv_string,StringSize);
 	    if(option_get_bool(Option,"ShowTbHits"))
-		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT" {%d,%.0f,"S64_FORMAT"} (%s) %s%c",Uci->best_depth,report_best_score(),
+		 gui_send(GUI,"%d %+d %.0f "S64_FORMAT EXT_INFO_FORMAT"(%s) %s%c",Uci->best_depth,report_best_score(),
 			Uci->time*100.0,Uci->node_nb,Uci->sel_depth,Uci->speed/1e3,Uci->tbhit_nb,move_string,pv_string,Uci->bound_type);
 	    else
         	gui_send(GUI,"%d %+d %.0f "S64_FORMAT" (%s) %s%c",Uci->best_depth,report_best_score(),
