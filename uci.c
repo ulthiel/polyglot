@@ -130,7 +130,7 @@ void uci_open(uci_t * uci, engine_t * engine) {
    uci->engine = engine;
 
    uci->name = NULL;
-   my_string_set(&uci->name,"<empty>");
+   my_string_set(&uci->name,"unknown");
    uci->author = NULL;
    my_string_set(&uci->author,"<empty>");
    option_init(uci->option);
