@@ -62,7 +62,7 @@ PolyGlot supports the "PolyGlot opening book format". This is the
 defacto standard non-proprietary opening book format. It is fully documented
 here
 
-http://alpha.uhasselt.be/Research/Algebra/Toga/book_format.html
+http://hgm.nubati.net/book_format.html
 
 Roughly speaking a PolyGlot opening book is a collection of triples
 (position, move, weight). A "position" is represented by a 64-bit
