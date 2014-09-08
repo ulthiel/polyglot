@@ -428,14 +428,35 @@ are ignored.
 
 This is the score in centipawns that will trigger resign "counting".
 
+=item B<QueenNeverResigns> (default: true)
+
+Suppresses resigning irrespective of the score,
+as long as the engine still has a Queen (hoping for a perpetual).
+
+=item B<HandleDraws> (default: false)
+
+When set Polyglot can accept draw offers on behalf of the engine,
+when the last reported engine score is below Polyglot's contempt.
+
+=item B<ContemptScore> (default: 30)
+
+This is the score in centipawns that the engine must minimally see
+in its own disadvantage before Polyglot will accept a draw offer.
+
 =item B<ShowPonder> (default: true)
 
 Show search information during engine pondering.  Turning this off
 might be better for interactive use in some interfaces.
 
+=item B<ShowTbHits> (default: false)
+
+Reports extra info on selective depth, search speed (knps) and
+tablebase hits at the beginning of the PV field in the thinking output
+of WinBoard protocol, just before the real PV.
+
 =item B<ScoreWhite> (default: true)
 
-Report score from white's point of view in xboard mode.
+Report score from white's point of view in xboard mode. (Wrecks XBoard...).
 
 =item B<KibitzMove> (default: false)
 
@@ -614,6 +635,9 @@ Standard UCI options are
     Hash 
     NalimovPath
     NalimovCache
+    GaviotaPath
+    GaviotaCache
+    SyzygyPath
     OwnBook
 
 Hidden options like "Ponder" or "UCI_xxx" are automatic
