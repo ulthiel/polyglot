@@ -6,7 +6,7 @@ OBJS = attack.obj board.obj book.obj book_make.obj book_merge.obj colour.obj\
  main.obj mainloop.obj move.obj move_do.obj move_gen.obj move_legal.obj\
  option.obj parse.obj pgn.obj piece.obj pipex_win32.obj pipex_posix.obj\
  random.obj san.obj search.obj square.obj uci.obj uci2uci.obj util.obj\
- xboard2uci.obj
+ xboard2uci.obj ini.obj
 
 LIBS = oldnames.lib
 
