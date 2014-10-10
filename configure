@@ -574,9 +574,9 @@ SHELL=${CONFIG_SHELL-/bin/sh}
 # Identity of this package.
 PACKAGE_NAME='polyglot'
 PACKAGE_TARNAME='polyglot'
-PACKAGE_VERSION='1.4.67b'
-PACKAGE_STRING='polyglot 1.4.67b'
-PACKAGE_BUGREPORT='michel.vandenbergh@uhasselt.be'
+PACKAGE_VERSION='2.02'
+PACKAGE_STRING='polyglot 2.02'
+PACKAGE_BUGREPORT='bug-xboard@gnu.org'
 
 ac_unique_file="mainloop.c"
 # Factoring default headers for most tests.
@@ -2061,7 +2061,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE='polyglot'
- VERSION='1.4.67b'
+ VERSION='2.0.2'
 
 
 cat >>confdefs.h <<_ACEOF
