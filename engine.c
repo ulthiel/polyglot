@@ -75,14 +75,14 @@ void engine_close(engine_t * engine){
 // engine_open()
 
 void engine_open(engine_t * engine){
-    int affinity;
+    int affinity= -1;
     pipex_open(engine->pipex,
                "Engine",
                option_get_string(Option,"EngineDir"),
                option_get_string(Option,"EngineCommand"));
     if(pipex_active(engine->pipex)){
             //play with affinity (bad idea)
-        affinity=option_get_int(Option,"Affinity");
+        sscanf(option_get_string(Option,"Affinity"), "%x", &affinity);
         if(affinity!=-1) set_affinity(engine,affinity); //AAA
             // set a low priority
         if (option_get_bool(Option,"UseNice")){
