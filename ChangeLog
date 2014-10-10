@@ -1,8 +1,17 @@
+=========2.0.2==================
+- The Polyglot Affinity option was activated to set the proces affinity mask on Windows, and turned into a string option to allow it to be given in hexadecimal.
+- The makefile for building with MSVC was repaired, and several docs updated.
+- The default name for engines that do not emit an "id name" was changed to "unknown".
+- Fail-low and fail-high info provided by the engine is realyed in thinking output as trailing ? and ! on the PV.
+- The UCI option SyzygyPath is recognized as special, and connected to the XBoard 'egtpath' command.
+- Tablebase hits, selective depth and nodes/sec can be shown in thinking output, subject to the Polyglot option ShowTbHits.
+- XBoard commands wrapped as info strings ("info string xboard XXX") will now be passed to the GUI (as "XXX").
+- Hash size is now capped at the engine-specified maximum, even when the XBoard memory command allows more tha that.
 - The exclude-moves feature now fully supports the WB protocol extension for this (exclude MOVE|all, include MOVE|all).
 =========2.0.1==================
-- This is the first of a fork initiated by HGM. It starts by reverting the previous book-learning change, as the reasons for it seem invalid. Peopl do not use book learning for making better opening books, but for adapting a book to one specific engine, and provide diversity in on-line play, to prevent human opponents from exploiting a likely line they once won by repeating it again and again.
+- This is the first of a fork initiated by HGM. It starts by reverting the previous book-learning change, as the reasons for it seem invalid. People do not use book learning for making better opening books, but for adapting a book to one specific engine, and provide diversity in on-line play, to prevent human opponents from exploiting a likely line they once won by repeating it again and again.
 - Polyglot was now also made to use the learn info it updates, for promoting diversity and avoidance of lines with a poor result record.
-- An option to refrain from resigning while you till have a Queen (QueenNeverResigns) was added
+- An option to refrain from resigning while you still have a Queen (QueenNeverResigns) was added
 - Option to accept draw offers (HandleDraws and ContemptScore) were added.
 - A first onset towards an exclude-moves feature was made.
 ========1.4.67b=================
