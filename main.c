@@ -443,6 +443,10 @@ int main(int argc, char * argv[]) {
 
         // start engine
     
+    if((entry=ini_find(ini,"polyglot","Affinity"))){ // must be known during start
+        polyglot_set_option(entry->name,entry->value);
+    }
+
     engine_open(Engine);
 
     if(!engine_active(Engine)){

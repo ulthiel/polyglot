@@ -79,7 +79,7 @@ option_t DefaultOptions[] = {
     { "UCIVersion",       "spin","1","2",       "2"         , NULL,0,NNB,  PG|XBOARD}, 
     { "CanPonder",        "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
     { "SyncStop",         "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "Affinity",         "spin","-1","32",     "-1"        , NULL,0,NNB,  PG}, 
+    { "Affinity",         "spin","-1","32",     "-1"        , NULL,0,NNB,  PG|XBOARD}, 
     { "RepeatPV",         "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD},
     { "PromoteWorkAround","check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
 

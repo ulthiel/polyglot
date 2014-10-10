@@ -466,7 +466,7 @@ typedef void (WINAPI *SPAM)(HANDLE, int);
 void pipex_set_affinity(pipex_t *pipex, int value){
     SPAM pSPAM;
 
-    if(pipex->hProcess) return;
+    if(!pipex->hProcess) return;
     if(value==-1) return;
 
     pSPAM = (SPAM) GetProcAddress(
