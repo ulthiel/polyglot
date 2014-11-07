@@ -1,3 +1,5 @@
+=========2.0.3==================
+- Bugfix, removing a debug printf which would forward all engine output to the GUI as comment. (Which would cause problems if the line contained "not found".)
 =========2.0.2==================
 - The Polyglot Affinity option was activated to set the proces affinity mask on Windows, and turned into a string option to allow it to be given in hexadecimal.
 - The makefile for building with MSVC was repaired, and several docs updated.
