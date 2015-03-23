@@ -591,7 +591,8 @@ so that XORing the corresponding key into the total will not work.
 Therefore the holdings keys are not XORed but added to the total key,
 after all other key terms have been taken into account through XOR.
 <p>
-The move encoding on large boards is fromSquare*boardSize + toSquare + boardSize*boardSize*promotionType.
+The move encoding on non-8x8 boards is generalized to fromSquare*boardSize + toSquare + boardSize*boardSize*promotionType
+(where boardSize = boardLength*boardWidth).
 For large boards this might leave a shortage of promotion types,
 but fortunately promotions are not very common in opening theory.
 The meaning of the promotionType code can be variant-dependent.
@@ -599,7 +600,71 @@ Especially if there is a shortage of codes, the most common promotions should re
 (E.g. in Grand Chess the board is 10x10, so the promotion-type multiplier is 10,000,
 while the 16-bit move encoding only runs upto 65,535.
 So there is only room for 6 promotion types, while 7 would be needed for the 6 possible piece types and non-promotion.)
-In asymmetric variants (e.g. Spartan Chess) the same code need not indicate the same piece type for both sides.
+In asymmetric variants (e.g. Spartan Chess) the same code needs not indicate the same piece type for both sides.
+<p>
+Special moves are indicated by using a (non-existent) promotion choice as an 'escape',
+in which case the from-square number isn't really a from-square, but identifies the special move.
+This system is used (with promotionType = 9, when available) for drops, where the from-square contains the ID of the piece to be dropped
+(A=1, B=2 etc.).
+It is also used to indicate double-moves of a Chu-Shogi Lion (promotionType = 10, when available, but 2 in Chu Shogi),
+where every combination of first and second step gets a unique code 0-63, which is then stored in the from-square.
+</p>
+<p>
+For really large boards (say larger than 144 squares) a more compact encoding system should be used,
+which indicates the from-square relative to the to-square in polar coordinates:
+toSquare + boardSize*directionCode + 4*boardSize*distanceCode.
+Here boardLength is the largest linear dimension of the board (be it height or width),
+and the distanceCodes &lt; boardLength-1 indicate the distance along the indicated ray to the from-square,
+such that the move goes in the direction forward, right, right-forward or left-forward as seen from the player that makes the move.
+When this lies off-board, the distanceCode should be subtracted from boardLength+1 to obtain the distance in the opposite direction.
+The rayCodes 0-3 represent the directions vertical, horizontal, diagonal and anti-diagonal (N, E, NE, SE), respectively.
+The remaining distanceCodes (>= boardLength-1) represent oblique moves, special moves and promotions.
+They always start with the two Knight jumps landing just right of the ray, in the positive and negative direction,
+followed by two (1,3) and two (2,3) jumps.
+</p><p>
+After the Knight jumps the meaning of the distanceCodes becomes variant dependent.
+By default they would contain promotions to various piece types,
+in the order of their piece code (i.e. N, B, R, Q, K, other) in so far they participate in the variant.
+These codes imply a single step in the forward direction along the ray.
+In variants with Shogi-like promotions, where all pieces can promote, but the only choice is promote or not,
+the entire range of distanceCode meanings will be repeated, this time meaning the move will be accompanied by a promotion.
+</p><p>
+The meaning of these variant-dependent distanceCodes can be overruled through the book header.
+After a line with the word "Special" in this header,
+a number of lines can follow, specifying the move as it would be for the vertical ray in the forward direction, starting from e4.
+
+
+After that follow codes to indicate additional oblique moves: a pair of Camel jumps, a pair of Zebra jumps, etc.
+With Shogi-like promotions, the 16 promotion choices instead code for two-step Lion moves that start off along the ray.
+Promotions are indicated by adding a number to the distanceCode one larger than the highest code used to indicate any oblique move.
+E.g. for Tenjiku Shogi with its 16x16 board codes 0-14 indicate true (positiove and negative) distances along the ray,
+15 & 16 are Knight jumps, 17-32 are Lion double moves, 33-36 are C and Z jumps (for the area moves),
+and promotions add 37.
+As the board has 256 squares, there are only 64 distance codes available,
+so the highest code for which a promoted version is available is 26 (26 + 37 = 63).
+So there is no room to specify promotion on C and Z jumps, and with part of the Lion double-moves.
+But the only pieces in Tenjiku Shogi that can make C and Z moves do not promote,
+and the Lion double-moves can be ordered such that only the backward moves cannot promote.
+</p><p>
+For Maka Dai Dai Shogi the 8 codes after the Lion double moves
+(36-43, as the board is 19x19 there, shifting up everything 3 places compared to Tenjiku)
+specify Lion Dog linear triple-moves,
+(2-out-1-in, 2+1-out, 1+2-out and 1+1+1-out in both directions along the ray)
+and 44 specifies the moves was made by a 'Universal Leaper' (the ray number indicating which one).
+The latter necessitates the decoding routine to find the corresponding piece on the board.
+('Universal Leaper' in this context means a piece that is not bound to rays,
+and can move almost anywhere, such as Hook Mover, encoded in ray 0, Capricorn (ray 1) or Emperor (ray 2).)
+With 45 distance codes, 4 rays and 361 board squares all available 16-bit codes ar almost used up,
+so there is no way to indicate promotion.
+This is serious, as this variant has promotion on capture,
+making promotion early in the opening quite common.
+Fortunately the pieces are clearly divided into those that promote to upward-compatible pieces
+(replacing all step moves by unlimited sliding in that direction),
+for which you would always promote,
+and those that 'promote' to a worthless Gold, which you would virtually never promote.
+So promotion / deferral is decided by which class the piece belongs to,
+and only moves that do the opposite from what you would normally do cannot be incorporated in the book.
+This again need consulting of the board position before the move can be decoded.
 </p>
 <iframe src="cgi-bin/count.cgi?H=9" width="130" height="40"></iframe>
 </body>
