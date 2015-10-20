@@ -51,7 +51,7 @@ option_t DefaultOptions[] = {
     { "HandleDraws",      "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
     { "ContemptScore",    "spin","0","10000",   "30"        , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
 
-    { "MateScore",        "spin","0","100000",  "10000"     , NULL,0,NNB,  PG|XBOARD}, 
+    { "MateScore",        "spin","0","100000",  "0"         , NULL,0,NNB,  PG|XBOARD}, 
 
     { "Book",             "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
     { "BookFile",         "file","0","0",       "book.bin"  , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 

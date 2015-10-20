@@ -953,13 +953,17 @@ static void parse_score(uci_t * uci, const char string[]) {
 
 static int mate_score(int dist) {
 
+   int ms = option_get_int(Option,"MateScore");
+
    ASSERT(dist!=0);
 
    if (FALSE) {
+   } else if (ms == 0) {
+       return (dist > 0 ? 100000 + dist : -100000 + dist);
    } else if (dist > 0) {
-       return +option_get_int(Option,"MateScore") - (+dist) * 2 + 1;
+       return +ms - (+dist) * 2 + 1;
    } else if (dist < 0) {
-       return -option_get_int(Option,"MateScore") + (-dist) * 2;
+       return -ms + (-dist) * 2;
    }
 
    return 0;
