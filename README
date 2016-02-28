@@ -394,8 +394,10 @@ CONFIG FILE FORMAT
        UCI (default: false)
            If true PolyGlot will not understand xboard commands.
 
-       MateScore (default: 10000)
-           Mate score reported to GUI when in xboard mode.
+       MateScore (default: 0)
+           Mate score reported to GUI when in xboard mode.  When set to 0 it
+           uses the new CECP convention of reporting 100000 + N for mate in N
+           moves, and -(100000 + N) for mated in N.
 
        Book (default: false)
            Indicates whether a PolyGlot book should be used.  This has no
@@ -584,4 +586,4 @@ SEE ALSO
 
 
 
-                                  2014-09-08                       POLYGLOT(6)
+                                  2015-10-20                       POLYGLOT(6)
