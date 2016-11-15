@@ -1,3 +1,7 @@
+=========2.0.4==================
+- Fix move choice using learn info (when BookLearn is on).
+- Use new XBoard mate-score convention by default.
+- Support UCI_PlayByNodes option / CECP nps command, and simulate this option using 'go nodes' when the engine does not support it.
 =========2.0.3==================
 - Bugfix, removing a debug printf which would forward all engine output to the GUI as comment. (Which would cause problems if the line contained "not found".)
 =========2.0.2==================

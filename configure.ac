@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT([polyglot], [2.0.3], [bug-xboard@gnu.org])
+AC_INIT([polyglot], [2.0.4], [bug-xboard@gnu.org])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mainloop.c])
 AC_CONFIG_HEADER([config.h])

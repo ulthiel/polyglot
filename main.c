@@ -39,7 +39,7 @@
 // constants
 
 
-static const char * const Version = "2.0.3";
+static const char * const Version = "2.0.4";
 static const char * const HelpMessage = "\
 SYNTAX\n\
 * polyglot [configfile] [-noini] [-ec engine] [-ed enginedirectory] [-en enginename] [-log true/false] [-lf logfile] [-pg <name>=<value>]* [-uci <name>=<value>]*\n\
