@@ -387,10 +387,19 @@ to wordexp so that shell quoting rules and expansions are applied.
 On Windows the EngineCommand is simply passed to CreateProcess which
 does its own shell like processing.
 
+=item B<Save>
+
+=item B<SettingsFile> (default: polyglot.ini)
+
+The SettingsFile option redefines the name of Polyglot's config file,
+so future use of the interactive "Polyglot Save" option can save
+interactively (i.e. through the GUI interface) changed settings
+to another file as from which the settings were originally read.
+
 =item B<SettingsDir> (default: $HOME/.polyglot on Linux; ".\_PG" on Windows)
 
 The directory where ini files are stored for engines that are started with
--noini. Such ini files may be created by pushing the "Save" button in the
+-noini. Such ini files may be created by pushing the "Polyglot Save" button in the
 Engine settings dialog in WB/XB 4.4.0 and higher. As a special exception
 (for WB/XB 4.4.0 compatibility) this directory is also used in case
 PolyGlot is started with config files named "polyglot_1st.ini" or
@@ -433,7 +442,7 @@ This is the score in centipawns that will trigger resign "counting".
 Suppresses resigning irrespective of the score,
 as long as the engine still has a Queen (hoping for a perpetual).
 
-=item B<HandleDraws> (default: false)
+=item B<Handledraws> (default: false)
 
 When set Polyglot can accept draw offers on behalf of the engine,
 when the last reported engine score is below Polyglot's contempt.
