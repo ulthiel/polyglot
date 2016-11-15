@@ -204,7 +204,7 @@ void book_moves(list_t * list, const board_t * board) {
 
       weight[pos - first_pos] = 1000 * (uint32)entry->count;
       if(option_get_bool(Option,"BookLearn")) // [HGM] improvised use of learn info
-          weight[pos - first_pos] *= ((uint32)entry->n + 10.) /((uint32)entry->sum + 1.);
+          weight[pos - first_pos] *= ((uint32)entry->sum + 4.) / (2.*(uint32)entry->n - (uint32)entry->sum + 4.);
       sum += weight[pos - first_pos];
    }
 
