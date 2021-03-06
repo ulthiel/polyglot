@@ -248,7 +248,7 @@ int wb_select(){
     while((opt=option_next(Option))){
         opt->mode&=~XBOARD;
         if(opt->mode & XBSEL){
-            opt->mode|=XBOARD; 
+            opt->mode|=XBOARD;
         }
     }
 }
@@ -266,7 +266,7 @@ int main(int argc, char * argv[]) {
 
 
     welcome_message(welcome);
- 
+
     printf("%s",welcome);
 
 
@@ -283,11 +283,11 @@ int main(int argc, char * argv[]) {
 
     util_init();
     option_init_pg();
-    
+
     square_init();
     piece_init();
     attack_init();
-    
+
     hash_init();
 
     my_random_init();
@@ -296,12 +296,12 @@ int main(int argc, char * argv[]) {
     ini_init(ini_command);
 
         // book utilities: do not touch these
-    
+
     if (argc >= 2 && my_string_equal(argv[1],"make-book")) {
         book_make(argc,argv);
         return EXIT_SUCCESS;
     }
-    
+
     if (argc >= 2 && my_string_equal(argv[1],"merge-book")) {
         book_merge(argc,argv);
         return EXIT_SUCCESS;
@@ -311,19 +311,19 @@ int main(int argc, char * argv[]) {
         book_dump(argc,argv);
         return EXIT_SUCCESS;
     }
-    
+
     if (argc >= 2 && my_string_equal(argv[1],"info-book")) {
         book_info(argc,argv);
         return EXIT_SUCCESS;
     }
 
         // perft
-    
+
     if (argc >= 2 && my_string_equal(argv[1],"perft")) {
         do_perft(argc,argv);
         return EXIT_SUCCESS;
     }
-    
+
         // What is the config file? This is very hacky right now.
 
         // Do we want a config file at all?
@@ -343,7 +343,7 @@ int main(int argc, char * argv[]) {
     }
 
         // Ok see if first argument looks like config file
-    
+
     if(argv[1] && !my_string_equal(argv[1],"epd-test") && !(argv[1][0]=='-')){
                 // first argument must be  config file
         if(!NoIni){
@@ -360,7 +360,7 @@ int main(int argc, char * argv[]) {
 
 
         // if we use a config file: load it!
-    
+
     if(!my_string_equal(option_get_string(Option,"SettingsFile"),"<empty>")){
         if(ini_parse(ini,option_get_string(Option,"SettingsFile"))){
             my_fatal("main(): Can't open config file \"%s\": %s\n",
@@ -386,7 +386,7 @@ int main(int argc, char * argv[]) {
     if((entry=ini_find(ini,"polyglot","LogFile"))){
         polyglot_set_option(entry->name,entry->value);
     }
-    
+
         // Concession to WB 4.4.0
         // Treat "polyglot_1st.ini" and "polyglot_2nd.ini" specially
 
@@ -407,15 +407,15 @@ int main(int argc, char * argv[]) {
     if((entry=ini_find(ini_command,"PolyGlot","LogFile"))){
         option_set(Option,entry->name,entry->value);
     }
-    
+
        // start logging if required
-    
+
     if (option_get_bool(Option,"Log")) {
         my_log_open(option_get_string(Option,"LogFile"));
     }
 
         // log welcome stuff
-    
+
     my_log("%s",welcome);
     my_log("POLYGLOT *** START ***\n");
     if(!my_string_equal(option_get_string(Option,"SettingsFile"),"<empty>")){
@@ -442,7 +442,7 @@ int main(int argc, char * argv[]) {
     }
 
         // start engine
-    
+
     if((entry=ini_find(ini,"polyglot","Affinity"))){ // must be known during start
         polyglot_set_option(entry->name,entry->value);
     }
@@ -454,16 +454,18 @@ int main(int argc, char * argv[]) {
     }
 
         // switch to UCI mode if necessary
-    
+
     if (option_get_bool(Option,"UCI")) {
         my_log("POLYGLOT *** Switching to UCI mode ***\n");
     }
 
-        // initialize uci parsing and send uci command. 
+        // initialize uci parsing and send uci command.
         // Parse options and wait for uciok
-    
+
     // XXX
     uci_open(Uci,Engine);
+
+		/* UT: The following code block seems weird somehow and id name is indeed not set. I'll try to fix it below.
 
     option_set_default(Option,"EngineName",Uci->name);
 
@@ -474,6 +476,16 @@ int main(int argc, char * argv[]) {
         option_set(Option,"EngineName",Uci->name);
     }
 
+		*/
+
+		//UT: Fix of above
+		if (my_string_equal(option_get_string(Option,"EngineName"),"<empty>")) {
+			option_set_default(Option,"EngineName",Uci->name);
+			option_set(Option,"EngineName",Uci->name);
+		} else {
+			my_string_set(&Uci->name,option_get_string(Option,"EngineName"));
+		}
+		
 
         // In the case we have been invoked with NoIni or StandardIni
         // we still have to load a config file.
@@ -481,7 +493,7 @@ int main(int argc, char * argv[]) {
     if(my_string_equal(option_get_string(Option,"SettingsFile"),"<empty>")){
 
             //  construct the name of the ConfigFile from the EngineName
-        
+
         char tmp[StringSize];
         char option_file[StringSize];
         int i;
@@ -502,7 +514,7 @@ int main(int argc, char * argv[]) {
         my_log("POLYGLOT INI file \"%s\"\n",option_get_string(Option,"SettingsFile"));
         if(ini_parse(ini,option_file)){
             my_log("POLYGLOT Unable to open %s\n",
-                   option_get_string(Option,"SettingsFile")); 
+                   option_get_string(Option,"SettingsFile"));
         }
     }
 
@@ -520,7 +532,7 @@ int main(int argc, char * argv[]) {
     ini_disp(ini);
 
             // extract PG options
-    
+
     ini_start_iter(ini);
     while((entry=ini_next(ini))){
         if(my_string_case_equal(entry->section,"polyglot")){
@@ -532,17 +544,17 @@ int main(int argc, char * argv[]) {
     }
 
         // Cater to our biggest customer:-)
-    
+
     if(option_get_bool(Option,"OnlyWbOptions")){
         wb_select();
     }
 
         // done initializing
-    
+
     Init = TRUE;
-    
+
         // collect engine options from config file(s) and send to engine
-    
+
     ini_start_iter(ini);
     while((entry=ini_next(ini))){
         if(my_string_case_equal(entry->section,"engine")){
@@ -551,20 +563,20 @@ int main(int argc, char * argv[]) {
         }
     }
 
-    
-    
+
+
         // EPD test
-    
+
     if (argv[1] && my_string_equal(argv[1],"epd-test")){
         argc=0;
         while((arg=argv[argc++]));
         epd_test(argc-1,argv);
         return EXIT_SUCCESS;
     }
-    
+
         // Anything that hasn't been parsed yet is a syntax error
         // It seems that XBoard sometimes passes empty strings as arguments
-        // to PolyGlot. We ignore these. 
+        // to PolyGlot. We ignore these.
 
     argc=1;
     while((arg=argv[argc++])){
@@ -575,7 +587,7 @@ int main(int argc, char * argv[]) {
 
     //    gui_init(GUI);
     mainloop();
-    return EXIT_SUCCESS; 
+    return EXIT_SUCCESS;
 }
 
 // polyglot_set_option()
@@ -643,7 +655,7 @@ void quit() {
 	Engine->pipex->quit_pending=TRUE;
         engine_send(Engine,"quit");
         engine_close(Engine);
-        
+
     }
     my_sleep(200);
     my_log("POLYGLOT Calling exit\n");
@@ -653,14 +665,14 @@ void quit() {
 // stop_search()
 
 static void stop_search() {
-    
+
     if (Init && Uci->searching) {
-        
+
         ASSERT(Uci->searching);
         ASSERT(Uci->pending_nb>=1);
-        
+
         my_log("POLYGLOT STOP SEARCH\n");
-        
+
         if (option_get_bool(Option,"SyncStop")) {
             uci_send_stop_sync(Uci);
         } else {
@@ -671,4 +683,3 @@ static void stop_search() {
 
 
 // end of main.c
-
