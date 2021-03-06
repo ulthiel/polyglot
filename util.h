@@ -158,9 +158,12 @@ extern bool   my_string_empty       (const char string[]);
 extern bool   my_string_whitespace  (const char string[]);
 extern bool   my_string_equal       (const char string_1[], const char string_2[]);
 extern bool   my_string_case_equal  (const char string_1[], const char string_2[]);
-extern const char* my_string_case_contains(const char haystack[], 
+extern const char* my_string_case_contains(const char haystack[],
 					   const char needle[]);
 
+
+//UT: added
+extern char* my_string_replace(const char* s, const char* oldW, const char* newW);
 
 extern bool   my_string_to_lower    (char dst[], const char src[]);
 
@@ -179,11 +182,11 @@ extern double my_timer_elapsed_real (const my_timer_t * timer);
 
 extern char * my_error();
 
-extern void my_dequote              (char *out, 
-				     const char *in, 
+extern void my_dequote              (char *out,
+				     const char *in,
 				     const char *special);
-extern void my_quote                (char *out, 
-				     const char *in, 
+extern void my_quote                (char *out,
+				     const char *in,
 				     const char *special);
 
 extern void my_sleep                (int msec);

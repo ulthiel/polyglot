@@ -23,84 +23,91 @@ static const bool UseDebug = FALSE;
 
 option_list_t Option[1];
 
-option_t DefaultOptions[] = {    
+option_t DefaultOptions[] = {
    // options
 
-    { "SettingsFile",     "file","0","0",       "polyglot.ini", NULL,0,NNB,  PG|XBOARD|XBSEL}, 
+    { "SettingsFile",     "file","0","0",       "polyglot.ini", NULL,0,NNB,  PG|XBOARD|XBSEL},
 
     { "SettingsDir",      "path","0","0",       "<empty>"   , NULL,0,NNB,  PG},
 
     { "OnlyWbOptions",    "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD},
 
-    { "EngineName",       "string","0","0",     "<empty>"   , NULL,0,NNB,  PG}, 
-    { "EngineDir",        "path","0","0",       "."         , NULL,0,NNB,  PG}, 
-    { "EngineCommand",    "string","0","0",     "<empty>"   , NULL,0,NNB,  PG}, 
+    { "EngineName",       "string","0","0",     "<empty>"   , NULL,0,NNB,  PG},
+    { "EngineDir",        "path","0","0",       "."         , NULL,0,NNB,  PG},
+    { "EngineCommand",    "string","0","0",     "<empty>"   , NULL,0,NNB,  PG},
 
-    { "Log",              "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
-    { "LogFile",          "file","0","0",       "polyglot.log", NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
+    //UT: Added more options
+    { "NodesLimit",       "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "DepthLimit",       "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "Movetime",         "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "AverageMovetime",  "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "AverageMovetimeWindow","string","0","0",    "10"   , NULL,0,NNB,  PG|XBOARD|UCI},
 
-    { "UCI",              "check","0","0",      "false"     , NULL,0,NNB,  PG}, 
+    { "Log",              "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
+    { "LogFile",          "file","0","0",       "polyglot.log", NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
 
-    { "UseNice",          "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|UCI}, 
-    { "NiceValue",        "spin", "0","20",     "5"         , NULL,0,NNB,  PG|XBOARD|UCI}, 
+    { "UCI",              "check","0","0",      "false"     , NULL,0,NNB,  PG},
 
-    { "Resign",           "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "ResignMoves",      "spin","0","10000",    "3"        , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "QueenNeverResigns","check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "ResignScore",      "spin","0","10000",   "600"       , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "HandleDraws",      "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "ContemptScore",    "spin","0","10000",   "30"        , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
+    { "UseNice",          "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "NiceValue",        "spin", "0","20",     "5"         , NULL,0,NNB,  PG|XBOARD|UCI},
 
-    { "MateScore",        "spin","0","100000",  "0"         , NULL,0,NNB,  PG|XBOARD}, 
+    { "Resign",           "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "ResignMoves",      "spin","0","10000",    "3"        , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "QueenNeverResigns","check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "ResignScore",      "spin","0","10000",   "600"       , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "HandleDraws",      "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "ContemptScore",    "spin","0","10000",   "30"        , NULL,0,NNB,  PG|XBOARD|XBSEL},
 
-    { "Book",             "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
-    { "BookFile",         "file","0","0",       "book.bin"  , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
+    { "MateScore",        "spin","0","100000",  "0"         , NULL,0,NNB,  PG|XBOARD},
 
-    { "BookRandom",       "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
-    { "BookDepth",        "spin","0","256",     "256"       , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI}, 
-    { "BookTreshold",     "spin","0","1000",    "5"         , NULL,0,NNB,  PG|XBOARD|UCI}, 
-    { "BookLearn",        "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
-    { "ShowTbHits",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
+    { "Book",             "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
+    { "BookFile",         "file","0","0",       "book.bin"  , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
 
-    { "KibitzMove",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
-    { "KibitzPV",         "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
+    { "BookRandom",       "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
+    { "BookDepth",        "spin","0","256",     "256"       , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
+    { "BookTreshold",     "spin","0","1000",    "5"         , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "BookLearn",        "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
+    { "ShowTbHits",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL},
 
-    { "KibitzCommand",    "string","0","0",     "tellall"   , NULL,0,NNB,  PG|XBOARD}, 
-    { "KibitzDelay",      "spin","0","1000",    "5"         , NULL,0,NNB,  PG|XBOARD}, 
-    { "KibitzInterval",   "spin","0","1000",    "0"         , NULL,0,NNB,  PG|XBOARD}, 
+    { "KibitzMove",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
+    { "KibitzPV",         "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
 
-    { "ShowPonder",       "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD}, 
-    { "ScoreWhite",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
+    { "KibitzCommand",    "string","0","0",     "tellall"   , NULL,0,NNB,  PG|XBOARD},
+    { "KibitzDelay",      "spin","0","1000",    "5"         , NULL,0,NNB,  PG|XBOARD},
+    { "KibitzInterval",   "spin","0","1000",    "0"         , NULL,0,NNB,  PG|XBOARD},
 
-    { "STFudge",          "spin","0","1000",      "20"      , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
+    { "ShowPonder",       "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD},
+    { "ScoreWhite",       "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
+
+    { "STFudge",          "spin","0","1000",      "20"      , NULL,0,NNB,  PG|XBOARD|XBSEL},
 
    // work-arounds
 
-    { "UCIVersion",       "spin","1","2",       "2"         , NULL,0,NNB,  PG|XBOARD}, 
-    { "CanPonder",        "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD}, 
-    { "SyncStop",         "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL}, 
-    { "Affinity",         "spin","0","0",       "FFFFFFFF"  , NULL,0,NNB,  PG|XBOARD}, 
+    { "UCIVersion",       "spin","1","2",       "2"         , NULL,0,NNB,  PG|XBOARD},
+    { "CanPonder",        "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD},
+    { "SyncStop",         "check","1","2",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL},
+    { "Affinity",         "spin","0","0",       "FFFFFFFF"  , NULL,0,NNB,  PG|XBOARD},
     { "RepeatPV",         "check","0","0",      "true"      , NULL,0,NNB,  PG|XBOARD},
     { "PromoteWorkAround","check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD},
 
    // internal
 
-    { "Chess960",         "check","0","0",      "false"     , NULL,0,NNB,  PG}, 
+    { "Chess960",         "check","0","0",      "false"     , NULL,0,NNB,  PG},
 
    // These options flag various hacks in the source to work around
    // WB quirks. They will eventually all be set to false. Probably
    // in 4.5.0
-    
-    { "WbWorkArounds",    "check","0","0",      "true"      , NULL,0,NNB,  PG}, 
-    { "WbWorkArounds2",   "check","0","0",      "false"     , NULL,0,NNB,  PG}, 
-    { "WbWorkArounds3",   "check","0","0",      "true"      , NULL,0,NNB,  PG}, 
+
+    { "WbWorkArounds",    "check","0","0",      "true"      , NULL,0,NNB,  PG},
+    { "WbWorkArounds2",   "check","0","0",      "false"     , NULL,0,NNB,  PG},
+    { "WbWorkArounds3",   "check","0","0",      "true"      , NULL,0,NNB,  PG},
 
     // Buttons
 
     { "Save",             "save","0","0",       "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL},
 
     // Sentinel
-    
+
     { NULL,               NULL,"0","0",         NULL        , NULL,0,NNB,  0},
 
 };
@@ -125,7 +132,7 @@ void option_init_pg() {
     option_t *p=DefaultOptions;
     char *home_dir;
     char SettingsDir[StringSize];
-    
+
     option_init(Option);
     while(p){
         if(p->name){
@@ -192,8 +199,8 @@ void option_insert(option_list_t *option, option_t *new_option){
 
 // option_set()
 
-bool option_set(option_list_t *option, 
-                const char name[], 
+bool option_set(option_list_t *option,
+                const char name[],
                 const char value[]) {
 
    option_t * opt;
@@ -219,7 +226,7 @@ bool option_set(option_list_t *option,
 // option_set_default()
 
 bool option_set_default(option_list_t *option,
-                           const char name[], 
+                           const char name[],
                            const char value[]) {
 
    option_t * opt;
@@ -340,7 +347,7 @@ option_t * option_find(option_list_t *option, const char name[]) {
            return opt;
        }
    }
-   
+
    return NULL;
 }
 
@@ -358,7 +365,7 @@ option_t * option_next(option_list_t *option){
         return NULL;
     }
     return &option->options[option->iter++];
-        
+
 }
 
 void option_free(option_t *option){
@@ -400,4 +407,3 @@ void option_from_ini(option_list_t *option,
 }
 
 // end of option.cpp
-

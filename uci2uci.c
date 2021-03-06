@@ -23,7 +23,7 @@
 
 #define StringSize 4096
 
-// variables 
+// variables
 
 static board_t UCIboard[1];
 static bool Init=TRUE;
@@ -60,7 +60,7 @@ static void parse_position(const char string[]) {
 /* This is borrowed from Toga II. This code is quite hacky and will be
    rewritten using the routines in parse.cpp.
 */
-                                                   
+
    const char * fen;
    char * moves;
    const char * ptr;
@@ -71,7 +71,7 @@ static void parse_position(const char string[]) {
    // init
 
    string_copy=my_strdup(string);
-   
+
    fen = strstr(string_copy,"fen ");
    moves = strstr(string_copy,"moves ");
 
@@ -189,7 +189,7 @@ static void send_uci_options() {
             format_uci_option_line(option_line,opt);
             gui_send(GUI,"%s",option_line);
         }
-    }   
+    }
     gui_send(GUI,"uciok");
 }
 
@@ -239,7 +239,7 @@ void uci2uci_gui_step(char string[]) {
              Init=FALSE;
          }
          SavedMove=MoveNone;
-         if(!strstr(string,"infinite") 
+         if(!strstr(string,"infinite")
 	    && UCIboard->move_nb<option_get_int(Option,"BookDepth")){
              move=book_move(UCIboard,option_get_bool(Option,"BookRandom"));
              if (move != MoveNone && move_is_legal(move,UCIboard)) {
@@ -262,6 +262,29 @@ void uci2uci_gui_step(char string[]) {
          my_log("POLYGLOT *** \"quit\" from GUI ***\n");
          quit();
      }
+
+     //UT: insert user limits into go command
+     if(match(string,"go *")){
+         const char* nodes_limit = option_get_string(Option,"NodesLimit");
+         const char* depth_limit = option_get_string(Option,"DepthLimit");
+         const char* movetime = option_get_string(Option,"Movetime");
+         const char* avg_movetime = option_get_string(Option,"AverageMovetime");
+         if (!my_string_equal(nodes_limit,"<empty>")){
+             sprintf(string, "go nodes %s", nodes_limit);
+         }
+         if (!my_string_equal(depth_limit,"<empty>")){
+             sprintf(string, "go depth %s", depth_limit);
+         }
+         if (!my_string_equal(movetime,"<empty>")){
+             sprintf(string, "go movetime %s", movetime);
+         }
+         if (!my_string_equal(avg_movetime,"<empty>")){
+             int avg_movetime_win = atoi(option_get_string(Option,"AverageMovetimeWindow"));
+             int avg_movetime_final = avg_movetime_win*atoi(avg_movetime);
+             sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
+         }
+    }
+    
      engine_send(Engine,"%s",string);
 }
 

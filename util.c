@@ -148,7 +148,7 @@ void my_log_open(const char file_name[]) {
 
    LogFile = fopen(file_name,"a");
 #ifndef _WIN32
-//line buffering doesn't work too well in MSVC and/or windows 
+//line buffering doesn't work too well in MSVC and/or windows
    if (LogFile != NULL) setvbuf(LogFile,NULL,_IOLBF,0); // line buffering
 #endif
    if(LogFile!=NULL){
@@ -168,15 +168,15 @@ void my_log_close() {
 // my_log()
 
 void my_log(const char format[], ...) {
-    
+
     char string[FormatBufferSize];
-    
+
     ASSERT(format!=NULL);
 
 //  format
 
     CONSTRUCT_ARG_STRING(format,string);
-    
+
 
     if (LogFile != NULL) {
         fprintf(LogFile,"%.3f %s",now_real(),string);
@@ -197,7 +197,7 @@ void my_fatal(const char format[], ...) {
 // format
 
     CONSTRUCT_ARG_STRING(format,string);
-    
+
     my_log("POLYGLOT %s",string);
     // This should be gui_send but this does not work.
     // Why?
@@ -237,7 +237,7 @@ bool my_file_read_line(FILE * file, char string[], int size) {
 
    src = 0;
    dst = 0;
-   
+
    while ((c=string[src++]) != '\0') {
       if (c != '\r' && c != '\n') string[dst++] = c;
    }
@@ -340,7 +340,7 @@ void my_string_tolower(char *dst, const char *src){
 // my_string_case_contains()
 
 const char* my_string_case_contains(const char string_1[], const char string_2[]){
-   
+
    char tmp1[StringSize];
    char tmp2[StringSize];
    char *where;
@@ -358,7 +358,7 @@ const char* my_string_case_contains(const char string_1[], const char string_2[]
    }
    return NULL;
 
-  
+
 }
 
 
@@ -377,6 +377,46 @@ char * my_strdup(const char string[]) {
 
    return address;
 }
+
+
+//UT: added my_string_replace
+char* my_string_replace(const char* s, const char* oldW, const char* newW)
+{
+    char* result;
+    int i, cnt = 0;
+    int newWlen = strlen(newW);
+    int oldWlen = strlen(oldW);
+
+    // Counting the number of times old word
+    // occur in the string
+    for (i = 0; s[i] != '\0'; i++) {
+        if (strstr(&s[i], oldW) == &s[i]) {
+            cnt++;
+
+            // Jumping to index after the old word.
+            i += oldWlen - 1;
+        }
+    }
+
+    // Making new string of enough length
+    result = (char*)malloc(i + cnt * (newWlen - oldWlen) + 1);
+
+    i = 0;
+    while (*s) {
+        // compare the substring with the result
+        if (strstr(s, oldW) == s) {
+            strcpy(&result[i], newW);
+            i += newWlen;
+            s += oldWlen;
+        }
+        else
+            result[i++] = *s++;
+    }
+
+    result[i] = '\0';
+    return result;
+}
+
 
 // my_string_clear()
 
@@ -479,7 +519,7 @@ double my_timer_elapsed_real(const my_timer_t * timer) {
 
 
 void my_dequote(char *out, const char *in, const char *special){
-  const char *p; 
+  const char *p;
   char *q;
   char c;
   p=in;
