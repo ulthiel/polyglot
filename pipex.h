@@ -56,6 +56,12 @@ typedef struct {
 #include <sys/resource.h>
 
 
+//UT: had to add this because I got
+//pipex_posix.c:270:7: error: implicit declaration of function 'kill' is invalid in C99
+#include <signal.h>
+#include <sys/wait.h>
+
+
 #include "io.h"
 #include "util.h"
 
@@ -83,9 +89,9 @@ typedef struct {
 #define PIPEX_MAGIC "!@#$%"
 #define WAIT_GRANULARITY 100
 
-// functions 
+// functions
 
-extern void  pipex_open         (pipex_t *pipex, 
+extern void  pipex_open         (pipex_t *pipex,
                                  const char *name,
                                  const char *working_dir,
                                  const char *command);
