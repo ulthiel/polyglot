@@ -39,7 +39,7 @@
 // constants
 
 
-static const char * const Version = "2.0.4";
+static const char * const Version = "2.0.4-ut-1";
 static const char * const HelpMessage = "\
 SYNTAX\n\
 * polyglot [configfile] [-noini] [-ec engine] [-ed enginedirectory] [-en enginename] [-log true/false] [-lf logfile] [-pg <name>=<value>]* [-uci <name>=<value>]*\n\
@@ -485,7 +485,7 @@ int main(int argc, char * argv[]) {
 		} else {
 			my_string_set(&Uci->name,option_get_string(Option,"EngineName"));
 		}
-		
+
 
         // In the case we have been invoked with NoIni or StandardIni
         // we still have to load a config file.

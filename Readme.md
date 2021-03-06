@@ -8,8 +8,8 @@ This version here is a fork of v2.0.4 by [H.G. Muller](http://hgm.nubati.net/cgi
 * NodesLimit. If set, any ```go``` command is replaced by ```go nodes NodesLimit```.
 * DepthLimit. If set, any ```go``` command is replaced by ```go nodes DepthLimit```.
 * Movetime. If set, any ```go``` command is replaced by ```go nodes movetime Movetime```.
-* AverageMovetime and AverageMovetimeWindow. If set, any ```go``` command is replaced by ```go wtime AverageMovetime*AverageMovetimeWindow btime AverageMovetime*AverageMovetimeWindow movestogo AverageMovetimeWindow```. This allows to achieve an average time per move over a sequence of specified length.
+* AverageMovetime and AverageMovetimeWindow. If set, any ```go``` command is replaced by ```go wtime AverageMovetime*AverageMovetimeWindow btime AverageMovetime*AverageMovetimeWindow movestogo AverageMovetimeWindow```. This allows to achieve an average time per move over a sequence of specified length. By default, AverageMovetimeWindow is set to 10.
 
 ## Compilation
 
-Under Linux and macOS the compilation is as usual via ```./configure && make```. Under Windows you need to install [Cygwin](https://www.cygwin.com) together with the packages gcc-core and gcc-g++. Compilation can then be done in the Cygwin terminal via ```make -f makefile.gcc```. You have to add ```C:\cygwin64\bin``` (or whatever your Cywgin installation directory is) to your PATH in order to have all the necessary DLLs available. 
+Under Linux and macOS the compilation is as usual via ```./configure && make```. Under Windows you need to install [Cygwin](https://www.cygwin.com) together with the packages gcc-core and gcc-g++. Compilation can then be done in the Cygwin terminal via ```make -f makefile.gcc```. You have to add ```C:\cygwin64\bin``` (or whatever your Cywgin installation directory is) to your PATH in order to have all the necessary DLLs available.
