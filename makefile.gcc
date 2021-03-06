@@ -7,8 +7,9 @@ OBJS = attack.o board.o book.o book_make.o book_merge.o colour.o engine.o\
  uci.o uci2uci.o util.o xboard2uci.o
 
 # set up for NO cygwin
-CYGF = -mno-cygwin
-CYGL = -lmsvcrt
+# UT: have to comment this to make it work with modern Cygwin
+#CYGF = -mno-cygwin
+#CYGL = -lmsvcrt
 
 CC = gcc
 DEFS = -DNDEBUG
