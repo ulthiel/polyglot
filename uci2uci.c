@@ -269,6 +269,7 @@ void uci2uci_gui_step(char string[]) {
          const char* depth_limit = option_get_string(Option,"DepthLimit");
          const char* movetime = option_get_string(Option,"Movetime");
          const char* avg_movetime = option_get_string(Option,"AverageMovetime");
+         float hostperf = atof(option_get_string(Option,"HostPerformanceFactor"));
          if (!my_string_equal(nodes_limit,"<empty>")){
              sprintf(string, "go nodes %s", nodes_limit);
          }
@@ -276,15 +277,18 @@ void uci2uci_gui_step(char string[]) {
              sprintf(string, "go depth %s", depth_limit);
          }
          if (!my_string_equal(movetime,"<empty>")){
-             sprintf(string, "go movetime %s", movetime);
+             int movetime_cal = (int) (atof(movetime)*hostperf);
+             sprintf(string, "go movetime %d", movetime_cal);
          }
          if (!my_string_equal(avg_movetime,"<empty>")){
              int avg_movetime_win = atoi(option_get_string(Option,"AverageMovetimeWindow"));
-             int avg_movetime_final = avg_movetime_win*atoi(avg_movetime);
+             int avg_movetime_cal = (int) (atof(avg_movetime)*hostperf);
+             int avg_movetime_final = avg_movetime_win*avg_movetime_cal;
              sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
+             printf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
          }
     }
-    
+
      engine_send(Engine,"%s",string);
 }
 

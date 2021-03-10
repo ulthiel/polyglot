@@ -41,7 +41,11 @@ option_t DefaultOptions[] = {
     { "DepthLimit",       "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
     { "Movetime",         "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
     { "AverageMovetime",  "string","0","0",     "<empty>"   , NULL,0,NNB,  PG|XBOARD|UCI},
-    { "AverageMovetimeWindow","string","0","0",    "10"   , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "AverageMovetimeWindow","string","0","0", "10"        , NULL,0,NNB,  PG|XBOARD|UCI},
+    { "HostCalibration",   "check","0","0",     "false"   , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
+    { "Hosts",            "string","0","0",     "<empty>"   , NULL,0,NNB,  PG},
+    { "HostsPerformance",  "string","0","0",     "<empty>"  , NULL,0,NNB,  PG},
+		{ "HostPerformanceFactor",  "string","0","0", "1.0"  , NULL,0,NNB,  PG|XBOARD|UCI},
 
     { "Log",              "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
     { "LogFile",          "file","0","0",       "polyglot.log", NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},

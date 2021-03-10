@@ -39,7 +39,7 @@
 // constants
 
 
-static const char * const Version = "2.0.4-ut-1";
+static const char * const Version = "2.0.4-ut-2";
 static const char * const HelpMessage = "\
 SYNTAX\n\
 * polyglot [configfile] [-noini] [-ec engine] [-ed enginedirectory] [-en enginename] [-log true/false] [-lf logfile] [-pg <name>=<value>]* [-uci <name>=<value>]*\n\
@@ -387,6 +387,17 @@ int main(int argc, char * argv[]) {
         polyglot_set_option(entry->name,entry->value);
     }
 
+    //UT: added this
+    if((entry=ini_find(ini,"polyglot","HostCalibration"))){
+        polyglot_set_option(entry->name,entry->value);
+    }
+    if((entry=ini_find(ini,"polyglot","Hosts"))){
+        polyglot_set_option(entry->name,entry->value);
+    }
+    if((entry=ini_find(ini,"polyglot","HostsPerformance"))){
+        polyglot_set_option(entry->name,entry->value);
+    }
+
         // Concession to WB 4.4.0
         // Treat "polyglot_1st.ini" and "polyglot_2nd.ini" specially
 
@@ -441,7 +452,38 @@ int main(int argc, char * argv[]) {
       my_fatal("main(): EngineCommand not set\n");
     }
 
-        // start engine
+    //UT: added this
+    if (option_get_bool(Option,"HostCalibration")) {
+        // Get name of current host
+        const char* host = get_hostname();
+        printf("Host: %s", host);
+
+        // Cycle thorugh PolyGlot variable Hosts and find position of
+        // this host
+        char* curhost = strtok(option_get_string(Option,"Hosts"), ",");
+        int hostnumber = 0;
+        while(curhost != NULL && !my_string_equal(host,curhost)){
+            curhost = strtok(NULL, ",");
+            hostnumber++;
+        }
+        if(curhost == NULL){
+            my_fatal("Host calibration activated but host %s not in list.\n", host);
+        }
+
+        // Now, get HostPerformance
+        char* hostperf_gauge = strtok(option_get_string(Option,"HostsPerformance"), ",");
+        char* hostperf = hostperf_gauge;
+        for(int i=0; i<hostnumber; i++){
+            hostperf = strtok(NULL, ",");
+        }
+        float hostperffact = atof(hostperf_gauge)/atof(hostperf);
+        printf("Host calibration activated. Performance factor: %f\n", hostperffact);
+        char hostperffactstr[50];
+        sprintf(hostperffactstr, "%g", hostperffact);
+        option_set(Option,"HostPerformanceFactor",hostperffactstr);
+    }
+
+    // start engine
 
     if((entry=ini_find(ini,"polyglot","Affinity"))){ // must be known during start
         polyglot_set_option(entry->name,entry->value);

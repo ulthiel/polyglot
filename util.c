@@ -564,3 +564,22 @@ void my_sleep(int msec){
   Sleep(msec);
 #endif
 }
+
+//UT: added this
+char* get_hostname(){
+    char hostbuffer[256];
+    int hostname;
+    struct hostent *host_entry;
+
+    hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+    host_entry = gethostbyname(hostbuffer);
+
+    char* hn;
+    hn = malloc(256);
+    sprintf(hn, "%s", hostbuffer);
+
+    //cut off domain name
+    char* hn_real = strtok(hn, ".");
+
+    return hn_real;
+}

@@ -11,6 +11,11 @@
 #include <sys/timeb.h>
 #include <sys/stat.h>
 
+//UT: added this
+#include <stdlib.h>
+#include <unistd.h>
+#include <netdb.h>
+
 // defines
 
 #ifndef EXIT_SUCCES
@@ -190,6 +195,9 @@ extern void my_quote                (char *out,
 				     const char *special);
 
 extern void my_sleep                (int msec);
+
+//UT: added this
+extern char * get_hostname();
 
 #endif // !defined UTIL_H
 
