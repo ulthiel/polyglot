@@ -275,8 +275,14 @@ void uci2uci_gui_step(char string[]) {
          return;
      }
 
+     //UT: added this
+     else if(match(string,"go *") && option_get_bool(Option,"PlainGo")) {
+         engine_send(Engine,"go");
+         return;
+     }
+
      //UT: insert user limits into go command
-     if(match(string,"go") || match(string,"go *")){
+     else if(match(string,"go") || match(string,"go *")){
          const char* nodes_limit = option_get_string(Option,"NodesLimit");
          const char* depth_limit = option_get_string(Option,"DepthLimit");
          const char* movetime = option_get_string(Option,"Movetime");
@@ -298,6 +304,8 @@ void uci2uci_gui_step(char string[]) {
              int avg_movetime_final = avg_movetime_win*avg_movetime_cal;
              sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
          }
+         engine_send(Engine,"%s",string);
+         return;
     }
 
      engine_send(Engine,"%s",string);

@@ -46,6 +46,7 @@ option_t DefaultOptions[] = {
     { "Hosts",            "string","0","0",     "<empty>"   , NULL,0,NNB,  PG},
     { "HostsPerformance",  "string","0","0",     "<empty>"  , NULL,0,NNB,  PG},
 		{ "HostPerformanceFactor",  "string","0","0", "1.0"  , NULL,0,NNB,  PG|XBOARD|UCI},
+		{ "PlainGo",   				"check","0","0",     "false"   , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
 
     { "Log",              "check","0","0",      "false"     , NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
     { "LogFile",          "file","0","0",       "polyglot.log", NULL,0,NNB,  PG|XBOARD|XBSEL|UCI},
