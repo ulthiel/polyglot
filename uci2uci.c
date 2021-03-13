@@ -265,8 +265,12 @@ void uci2uci_gui_step(char string[]) {
 
      //UT: added this
      if(match(string,"test")){
-         engine_send(Engine,"%s","ucinewgame");
+         /*engine_send(Engine,"%s","ucinewgame");
          engine_send(Engine,"%s","position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         */
+         uci_send_ucinewgame(Uci);
+         parse_setoption("position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         Init=FALSE;
          printf("test position loaded\n");
          return;
      }
