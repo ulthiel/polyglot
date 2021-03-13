@@ -69,6 +69,7 @@ static void parse_position(const char string[]) {
    char * string_copy;
 
    // init
+   //printf("DEBUG: %s\n", string);
 
    string_copy=my_strdup(string);
 
@@ -234,12 +235,22 @@ void uci2uci_gui_step(char string[]) {
          parse_position(string);
          Init=FALSE;
      }else if(match(string,"go *")){
+         //UT: detect if user limit was set
+         //If so, we'll modify the go command
+         bool user_limit = FALSE;
+         if (!my_string_equal(option_get_string(Option,"NodesLimit"),"<empty>") || !my_string_equal(option_get_string(Option,"DepthLimit"),"<empty>") || !my_string_equal(option_get_string(Option,"Movetime"),"<empty>") ||
+         !my_string_equal(option_get_string(Option,"AverageMovetime"),"<empty>")) {
+             user_limit = TRUE;
+         }
+
          if(Init){
              board_from_fen(UCIboard,StartFen);
              Init=FALSE;
          }
          SavedMove=MoveNone;
-         if(!strstr(string,"infinite")
+         //UT: if user_limit is active, we also consider "go infinite" with
+         //limit and we'll do book lookup.
+         if( (!strstr(string,"infinite") || user_limit)
 	    && UCIboard->move_nb<option_get_int(Option,"BookDepth")){
              move=book_move(UCIboard,option_get_bool(Option,"BookRandom"));
              if (move != MoveNone && move_is_legal(move,UCIboard)) {
@@ -252,6 +263,32 @@ void uci2uci_gui_step(char string[]) {
                  }
              }
          }
+
+         //UT: handle user limit
+         if(user_limit){
+             const char* nodes_limit = option_get_string(Option,"NodesLimit");
+             const char* depth_limit = option_get_string(Option,"DepthLimit");
+             const char* movetime = option_get_string(Option,"Movetime");
+             const char* avg_movetime = option_get_string(Option,"AverageMovetime");
+             float hostperf = atof(option_get_string(Option,"HostPerformanceFactor"));
+             if (!my_string_equal(nodes_limit,"<empty>")){
+                 sprintf(string, "go nodes %s", nodes_limit);
+             }
+             if (!my_string_equal(depth_limit,"<empty>")){
+                 sprintf(string, "go depth %s", depth_limit);
+             }
+             if (!my_string_equal(movetime,"<empty>")){
+                 int movetime_cal = (int) (atof(movetime)*hostperf);
+                 sprintf(string, "go movetime %d", movetime_cal);
+             }
+             if (!my_string_equal(avg_movetime,"<empty>")){
+                 int avg_movetime_win = atoi(option_get_string(Option,"AverageMovetimeWindow"));
+                 int avg_movetime_cal = (int) (atof(avg_movetime)*hostperf);
+                 int avg_movetime_final = avg_movetime_win*avg_movetime_cal;
+                 sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
+             }
+        }
+
      }else if(match(string,"ponderhit") || match(string,"stop")){
          if(SavedMove!=MoveNone){
          	send_book_move(SavedMove);
@@ -264,49 +301,15 @@ void uci2uci_gui_step(char string[]) {
      }
 
      //UT: added this
-     if(match(string,"test")){
-         /*engine_send(Engine,"%s","ucinewgame");
-         engine_send(Engine,"%s","position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
-         */
+     else if(match(string,"test")){
          uci_send_ucinewgame(Uci);
-         parse_setoption("position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         parse_position("position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
          Init=FALSE;
+         engine_send(Engine, "position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
          printf("test position loaded\n");
          return;
      }
 
-     //UT: added this
-     else if(match(string,"go *") && option_get_bool(Option,"PlainGo")) {
-         engine_send(Engine,"go");
-         return;
-     }
-
-     //UT: insert user limits into go command
-     else if(match(string,"go") || match(string,"go *")){
-         const char* nodes_limit = option_get_string(Option,"NodesLimit");
-         const char* depth_limit = option_get_string(Option,"DepthLimit");
-         const char* movetime = option_get_string(Option,"Movetime");
-         const char* avg_movetime = option_get_string(Option,"AverageMovetime");
-         float hostperf = atof(option_get_string(Option,"HostPerformanceFactor"));
-         if (!my_string_equal(nodes_limit,"<empty>")){
-             sprintf(string, "go nodes %s", nodes_limit);
-         }
-         if (!my_string_equal(depth_limit,"<empty>")){
-             sprintf(string, "go depth %s", depth_limit);
-         }
-         if (!my_string_equal(movetime,"<empty>")){
-             int movetime_cal = (int) (atof(movetime)*hostperf);
-             sprintf(string, "go movetime %d", movetime_cal);
-         }
-         if (!my_string_equal(avg_movetime,"<empty>")){
-             int avg_movetime_win = atoi(option_get_string(Option,"AverageMovetimeWindow"));
-             int avg_movetime_cal = (int) (atof(avg_movetime)*hostperf);
-             int avg_movetime_final = avg_movetime_win*avg_movetime_cal;
-             sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
-         }
-         engine_send(Engine,"%s",string);
-         return;
-    }
 
      engine_send(Engine,"%s",string);
 }
