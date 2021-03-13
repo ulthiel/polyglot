@@ -263,8 +263,16 @@ void uci2uci_gui_step(char string[]) {
          quit();
      }
 
+     //UT: added this
+     if(match(string,"test")){
+         engine_send(Engine,"%s","ucinewgame");
+         engine_send(Engine,"%s","position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         printf("test position loaded\n");
+         return;
+     }
+
      //UT: insert user limits into go command
-     if(match(string,"go *")){
+     if(match(string,"go") || match(string,"go *")){
          const char* nodes_limit = option_get_string(Option,"NodesLimit");
          const char* depth_limit = option_get_string(Option,"DepthLimit");
          const char* movetime = option_get_string(Option,"Movetime");
@@ -285,7 +293,6 @@ void uci2uci_gui_step(char string[]) {
              int avg_movetime_cal = (int) (atof(avg_movetime)*hostperf);
              int avg_movetime_final = avg_movetime_win*avg_movetime_cal;
              sprintf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
-             printf(string, "go wtime %d btime %d movestogo %d", avg_movetime_final, avg_movetime_final, avg_movetime_win);
          }
     }
 

@@ -9,6 +9,10 @@ This version here is a fork of v2.0.4 by [H.G. Muller](http://hgm.nubati.net/cgi
 * DepthLimit. If set, any ```go``` command is replaced by ```go nodes DepthLimit```.
 * Movetime. If set, any ```go``` command is replaced by ```go nodes movetime Movetime```.
 * AverageMovetime and AverageMovetimeWindow. If set, any ```go``` command is replaced by ```go wtime AverageMovetime*AverageMovetimeWindow btime AverageMovetime*AverageMovetimeWindow movestogo AverageMovetimeWindow```. This allows to achieve an average time per move over a sequence of specified length. By default, AverageMovetimeWindow is set to 10.
+* HostCalibration, Hosts, and HostsPerformance. Host must be a comma-separated list of host names and HostsPerformance a comma separated list of integers. From this we determine the relative HostPerformanceFactor. If HostCalibration=true, then move times are multiplied by HostPerformanceFactor. This allows to ensure similar conditions on different machines.
+
+Moreover, I have added the following additional UCI commands:
+* test. This loads (using position fen) a difficult test position (6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -). This allows a quick engine test without first searching for an appropriate test position etc.
 
 ## Compilation
 
