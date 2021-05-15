@@ -303,9 +303,10 @@ void uci2uci_gui_step(char string[]) {
      //UT: added this
      else if(match(string,"test")){
          uci_send_ucinewgame(Uci);
-         parse_position("position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         //This is the position after 23. exd5 Qd6 in the "Immortal Game", Topalov vs Kasparov (1999). The correct move is the rook sacrifice 24. Rxd4.
+         parse_position("position startpos moves e2e4 d7d6 d2d4 g8f6 b1c3 g7g6 c1e3 f8g7 d1d2 c7c6 f2f3 b7b5 g1e2 b8d7 e3h6 g7h6 d2h6 c8b7 a2a3 e7e5 e1c1 d8e7 c1b1 a7a6 e2c1 e8c8 c1b3 e5d4 d1d4 c6c5 d4d1 d7b6 g2g3 c8b8 b3a5 b7a8 f1h3 d6d5 h6f4 b8a7 h1e1 d5d4 c3d5 b6d5 e4d5 e7d6");
          Init=FALSE;
-         engine_send(Engine, "position fen 6br/1KNp1n1r/2p2p2/P1ppRP2/1kP3pP/3PBB2/PN1P4/8 w - -");
+         engine_send(Engine, "position startpos moves e2e4 d7d6 d2d4 g8f6 b1c3 g7g6 c1e3 f8g7 d1d2 c7c6 f2f3 b7b5 g1e2 b8d7 e3h6 g7h6 d2h6 c8b7 a2a3 e7e5 e1c1 d8e7 c1b1 a7a6 e2c1 e8c8 c1b3 e5d4 d1d4 c6c5 d4d1 d7b6 g2g3 c8b8 b3a5 b7a8 f1h3 d6d5 h6f4 b8a7 h1e1 d5d4 c3d5 b6d5 e4d5 e7d6");
          printf("test position loaded\n");
          return;
      }
